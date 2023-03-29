@@ -1,0 +1,22 @@
+---
+- name: Make ubuntu's network static
+  hosts: ubuntu
+  gather_facts: no
+  vars_files:
+    - "vars/ubuntu_vars.yml"
+  become: true
+  tasks:
+    - name: Get backup of original config
+      vars:
+        - filename: "/etc/netplan/50-cloud-init.yaml"
+      copy:
+        src: "{{ filename }}"
+        dest: "{{ filename }}.bak"
+        remote_src: yes
+        force: no
+    - name: Copy ubuntu netplan template
+      template:
+        src: "templates/50-cloud-init.yaml.j2"
+        dest: "/etc/netplan/50-cloud-init.yaml"
+    - name: Apply new netplan configuration
+      shell: netplan apply

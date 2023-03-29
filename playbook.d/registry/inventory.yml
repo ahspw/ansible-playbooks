@@ -1,0 +1,10 @@
+all:
+  hosts:
+  children:
+    ubuntu:
+      hosts:
+        worker-1:
+    centos:
+      hosts:
+    debian:
+      hosts:

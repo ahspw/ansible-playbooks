@@ -1,0 +1,6 @@
+v2ray_version: "5.4.0"
+path: "/opt/v2ray"
+http_port: 1010
+socks_port: 1110
+delete_trash_files: no
+create_service: yes

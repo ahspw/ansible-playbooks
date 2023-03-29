@@ -1,0 +1,6 @@
+all:
+  hosts:
+  children:
+    webserver:
+      hosts:
+        worker-1:

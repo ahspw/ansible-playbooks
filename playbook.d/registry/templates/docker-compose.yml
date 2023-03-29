@@ -1,0 +1,18 @@
+version: "3"
+services:
+  {{ name | default('registry') }}:
+    image: registry:2
+    container_name: {{ name | default('registry') }}
+    restart: always
+    ports:
+      - "{{ port | default('5000')}}:5000"
+    volumes:
+      - "{{ data_volume_name | default('registry-data') }}:/var/lib/registry"
+      - "$PWD/auth:/auth"
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+
+volumes:
+  {{ data_volume_name | default('registry-data') }}:

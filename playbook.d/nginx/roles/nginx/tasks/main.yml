@@ -1,0 +1,34 @@
+---
+- name: Install nginx on ubuntu server
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+- name: Copy configuration file to remote server
+  vars:
+    - template_name: "test5.ahspw.ir"
+    - nginx_port: "80"
+    - nginx_domain: "{{ template_name }}"
+    - server_tokens: "off"
+    - nginx_root_directory: "/usr/share/nginx/html"
+  template:
+    src: "templates/main.j2"
+    dest: "/etc/nginx/sites-enabled/{{ template_name }}.conf"
+    force: true
+- name: "Backup {{ path }}/index.html to {{ path }}/index.html.bak"
+  vars:
+    - path: "/usr/share/nginx/html"
+  copy:
+    src: "{{ path }}/index.html"
+    dest: "{{ path }}/index.html.bak"
+    remote_src: yes
+- name: Copy simple index file to remote server
+  vars:
+    - context: "Hello my frined :)"
+  template:
+    src: "templates/index.j2"
+    dest: "/usr/share/nginx/html/index.html"
+- name: Restart nginx service
+  service:
+    name: nginx
+    state: restarted

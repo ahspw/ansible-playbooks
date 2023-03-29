@@ -1,0 +1,22 @@
+---
+- name: Remove v2ray-core from ubuntu
+  hosts: vpnservers
+  gather_facts: false
+  become: true
+  vars_files:
+    - vars/remove_vars.yml
+  tasks:
+    - name: Stop v2ray service
+      service:
+        name: v2ray
+        state: stopped
+      when: remove_service
+    - name: Remove v2ray service
+      file:
+        name: "/etc/systemd/system/v2ray.service"
+        state: absent
+      when: remove_service
+    - name: Remove v2ray files
+      file:
+        name: "{{ path | default('/opt/v2ray') }}"
+        state: absent

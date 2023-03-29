@@ -1,0 +1,31 @@
+---
+- name: Install docker registry on ubuntu
+  hosts: ubuntu
+  gather_facts: no
+  become: true
+  vars_files:
+    - "vars/ubuntu-vars.yml"
+  tasks:
+    - name: Install docker packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - "docker.io"
+        - "docker-compose"
+        - "apache2-utils"
+    - name: "Create folder {{ composefile_path | default('/opt/registry') }} if not exists"
+      file:
+        name: "{{ composefile_path | default('/opt/registry') }}"
+        state: directory
+    - name: Copy docker-comopse.yml to target server
+      template:
+        src: "templates/docker-compose.yml"
+        dest: "{{ composefile_path | default('/opt/registry') }}"
+    - name: Create htpasswd file
+      shell: "htpasswd -Bbn {{ registry_username | default('ahsp') }} {{ registry_password | default('ahsp') }} > {{ composefile_path | default('/opt/registry') }}/htpasswd"
+    - name: Create registry container
+      community.docker.docker_compose:
+        project_src: "{{ composefile_path | default('/opt/registry') }}"
+        state: present

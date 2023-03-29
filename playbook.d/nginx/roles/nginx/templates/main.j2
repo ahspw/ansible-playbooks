@@ -1,0 +1,9 @@
+server {
+  listen "{{ nginx_port }}";
+  server_name "{{ nginx_domain }}";
+  server_tokens "{{ server_tokens }}";
+
+  location / {
+    root "{{ nginx_root_directory }}";
+  }
+}

@@ -1,0 +1,7 @@
+---
+- name: Playbook
+  hosts: webserver
+  gather_facts: false
+  tasks:
+    - import_role:
+        name: nginx

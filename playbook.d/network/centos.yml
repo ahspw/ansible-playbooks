@@ -1,0 +1,22 @@
+---
+- name: Make centos's network static
+  hosts: centos
+  gather_facts: no
+  vars_files:
+    - "vars/centos_vars.yml"
+  become: true
+  tasks:
+    - name: Get backup of original config
+      vars:
+        - filename: "/etc/sysconfig/network-scripts/ifcfg-eth0"
+      copy:
+        src: "{{ filename }}"
+        dest: "{{ filename }}.bak"
+        remote_src: yes
+        force: no
+    - name: Copy centos netplan template
+      template:
+        src: "templates/ifcfg-eth0.j2"
+        dest: "/etc/sysconfig/network-scripts/ifcfg-eth0"
+    - name: ifdown and ifup interface for applying changes
+      shell: "ifdown eth0; ifup eth0"

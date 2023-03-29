@@ -1,0 +1,10 @@
+network:
+    ethernets:
+        ens3:
+            dhcp4: false
+            gateway4: {{ gateway }}
+            addresses:
+                - {{ ipv4 }}/24
+            nameservers:
+                addresses:
+                    - 1.1.1.1

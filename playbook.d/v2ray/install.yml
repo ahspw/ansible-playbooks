@@ -1,0 +1,55 @@
+---
+- name: Install v2ray-core on ubuntu
+  hosts: vpnservers
+  gather_facts: false
+  become: true
+  vars_files:
+    - vars/install_vars.yml
+  tasks:
+    - name: Create /opt/v2ray folder if not exists
+      file:
+        name: "{{ path | default('/opt/v2ray') }}"
+        state: directory
+    - name: Download v2ray zip file
+      get_url:
+        url: "https://github.com/v2fly/v2ray-core/releases/download/v{{ v2ray_version  | default('5.3.0') }}/v2ray-linux-64.zip"
+        dest: "/tmp/"
+    - name: Install unzip package
+      apt:
+        name: unzip
+        state: present
+        update_cache: true
+    - name: Unzip archive file
+      unarchive:
+        src: "/tmp/v2ray-linux-64.zip"
+        dest: "{{ path | default('/opt/v2ray') }}"
+        remote_src: yes
+    - name: Get backup of config.json
+      copy:
+        src: "{{ path | default('/opt/v2ray') }}/config.json"
+        dest: "{{ path | default('/opt/v2ray') }}/config.json.bak"
+        remote_src: yes
+    - name: Copy new config.json
+      template:
+        src: "templates/config.json.j2"
+        dest: "{{ path | default('/opt/v2ray') }}/config.json"
+    - name: Copy new v2ray.service
+      template:
+        src: "templates/v2ray.service.j2"
+        dest: "/etc/systemd/system/v2ray.service"
+      when: create_service
+    - name: Remove trash files
+      file:
+        path: "/tmp/v2ray-linux-64.zip"
+        state: absent
+      when: delete_trash_files
+    - name: Stop v2ray service
+      service:
+        name: v2ray
+        state: stopped
+      when: create_service
+    - name: Start v2ray service
+      service:
+        name: v2ray
+        state: started
+      when: create_service

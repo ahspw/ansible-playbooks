@@ -1,0 +1,17 @@
+all:
+  hosts:
+  children:
+    ubuntu:
+      hosts:
+        193.141.126.103:
+          ansible_user: root
+    centos:
+      hosts:
+        185.213.167.100:
+          ansible_user: root
+          ansible_password: zamn54VeX6Wjx6zq
+    debian:
+      hosts:
+        185.213.167.14:
+          ansible_user: root
+          ansible_password: imPpC3D6J

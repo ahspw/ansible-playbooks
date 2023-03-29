@@ -1,0 +1,24 @@
+---
+- name: Make debian's network static
+  hosts: debian
+  gather_facts: no
+  vars_files:
+    - "vars/debian_vars.yml"
+  become: true
+  tasks:
+    - name: Get backup of original config
+      vars:
+        - filename: "/etc/network/interfaces"
+      copy:
+        src: "{{ filename }}"
+        dest: "{{ filename }}.bak"
+        remote_src: yes
+        force: no
+    - name: Copy ubuntu netplan template
+      template:
+        src: "templates/interfaces.j2"
+        dest: "/etc/network/interfaces"
+    - name: Restart network service
+      service:
+        name: networking
+        state: restarted

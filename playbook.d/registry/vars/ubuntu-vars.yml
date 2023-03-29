@@ -1,0 +1,6 @@
+# name: registry-data
+# port: 5001
+# data_volume_name: registry-new
+# composefile_path: /opt/registry-2
+# registry_username: ahsp
+# registry_password: ahsp
